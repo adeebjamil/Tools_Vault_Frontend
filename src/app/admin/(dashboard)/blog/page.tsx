@@ -47,6 +47,11 @@ export default function BlogPage() {
   const [postCount, setPostCount] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  // Topic creation state
+  const [newTopicName, setNewTopicName] = useState("");
+  const [isCreatingTopic, setIsCreatingTopic] = useState(false);
+  const [showTopicInput, setShowTopicInput] = useState(false);
   
   // Edit state
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
@@ -82,6 +87,32 @@ export default function BlogPage() {
       }
     } catch (error) {
       console.error("Failed to fetch topics:", error);
+    }
+  };
+
+  const handleCreateTopic = async () => {
+    if (!newTopicName.trim()) return;
+    setIsCreatingTopic(true);
+    try {
+      const res = await fetch(`${API_URL}/api/blog/topics`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newTopicName }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTopics([...topics, data.data]);
+        setNewTopicName("");
+        setShowTopicInput(false);
+        setSelectedTopic(data.data.id); // Auto-select new topic
+        alert("Topic created successfully!");
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      alert("Failed to create topic");
+    } finally {
+      setIsCreatingTopic(false);
     }
   };
 
@@ -596,9 +627,49 @@ export default function BlogPage() {
                   </div>
 
                   <div className="mb-8">
-                    <label className="block text-sm font-bold text-white mb-3">
-                      Select Topic
-                    </label>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-sm font-bold text-white">
+                        Select Topic
+                      </label>
+                      <button 
+                        onClick={() => setShowTopicInput(!showTopicInput)}
+                        className="text-xs text-yellow-500 hover:text-yellow-400 font-medium flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add New Topic
+                      </button>
+                    </div>
+
+                    <AnimatePresence>
+                      {showTopicInput && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden mb-3"
+                        >
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={newTopicName}
+                              onChange={(e) => setNewTopicName(e.target.value)}
+                              placeholder="Enter topic name..."
+                              className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
+                            />
+                            <button
+                              onClick={handleCreateTopic}
+                              disabled={isCreatingTopic || !newTopicName.trim()}
+                              className="px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-bold hover:bg-yellow-400 disabled:opacity-50 transition-colors"
+                            >
+                              {isCreatingTopic ? "..." : "Add"}
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
                       {topics.map((topic) => (
                         <button
