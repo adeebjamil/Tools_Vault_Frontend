@@ -82,7 +82,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className={`${inter.className} antialiased min-h-screen bg-slate-950 text-white`}>
+      <body className={`${inter.className} antialiased min-h-screen bg-slate-950 text-white`} suppressHydrationWarning>
         {children}
         <CookieConsent />
       </body>
