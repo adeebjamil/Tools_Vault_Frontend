@@ -10,6 +10,7 @@ interface User {
   name: string;
   email: string;
   role: string;
+  avatar?: string;
 }
 
 const sidebarLinks = [
@@ -96,29 +97,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    // Check for authentication
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      const userData = localStorage.getItem("user");
 
-    if (!token || !userData) {
-      router.push("/admin/login");
-      return;
-    }
-
-    try {
-      const parsedUser = JSON.parse(userData);
-      if (parsedUser.role !== "admin") {
+      if (!token || !userData) {
         setIsAuthorized(false);
+        router.push("/admin/login");
         setLoading(false);
         return;
       }
-      setUser(parsedUser);
-      setIsAuthorized(true);
-    } catch {
-      router.push("/admin/login");
-    }
+
+      try {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthorized(true);
+      } catch (e) {
+        router.push("/admin/login");
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
+
+    // Listen for profile updates
+    const handleUserUpdate = () => checkAuth();
+    window.addEventListener("userUpdated", handleUserUpdate);
     
-    setLoading(false);
+    return () => window.removeEventListener("userUpdated", handleUserUpdate);
   }, [router]);
 
   const handleLogout = () => {
@@ -201,9 +207,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* User Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800 bg-neutral-900">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center flex-shrink-0 font-bold border border-yellow-500/30">
-              {user?.name?.charAt(0) || "A"}
-            </div>
+            {user?.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt={user.name} 
+                className="w-9 h-9 rounded-full object-cover border border-neutral-700" 
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center flex-shrink-0 font-bold border border-yellow-500/30">
+                {user?.name?.charAt(0) || "A"}
+              </div>
+            )}
             <div className="flex-1 min-w-0 lg:hidden xl:block">
               <p className="text-sm font-medium text-white truncate">{user?.name || "Admin"}</p>
               <p className="text-xs text-neutral-500 truncate">{user?.email}</p>
