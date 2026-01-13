@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import AccessDenied from "@/components/admin/AccessDenied";
 
 interface User {
   id: string;
@@ -69,15 +70,30 @@ const sidebarLinks = [
   },
 ];
 
-import AccessDenied from "@/components/admin/AccessDenied";
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Closed by default on mobile
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(true);
+
+  // Auto-open sidebar on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     // Check for authentication
@@ -113,8 +129,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="animate-spin w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -124,118 +140,123 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black text-white">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-40 lg:hidden backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transition-all duration-300 ${
-          sidebarOpen ? "w-64" : "w-20"
+        className={`fixed inset-y-0 left-0 z-50 bg-neutral-900 border-r border-neutral-800 transition-all duration-300 w-64 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0 lg:w-20 xl:w-64"
         }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
-          <Link href="/admin/dashboard" className="flex items-center gap-2">
-            <div className="icon-box-sm flex-shrink-0">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-neutral-800">
+          <Link href="/admin/dashboard" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-yellow-500 flex items-center justify-center text-black font-bold group-hover:scale-110 transition-transform">
+              TV
             </div>
-            {sidebarOpen && (
-              <span className="text-lg font-bold">
-                Tools<span className="text-primary-600">Vault</span>
-              </span>
-            )}
+            <span className="text-lg font-bold lg:hidden xl:block">
+              Tools<span className="text-yellow-500">Vault</span>
+            </span>
           </Link>
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden text-neutral-400 hover:text-white"
           >
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? "M11 19l-7-7 7-7m8 14l-7-7 7-7" : "M13 5l7 7-7 7M5 5l7 7-7 7"} />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-2">
           {sidebarLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
-                    ? "bg-primary-50 text-primary-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-yellow-500/10 text-yellow-500 font-medium border border-yellow-500/20"
+                    : "text-neutral-400 hover:bg-neutral-800 hover:text-white"
                 }`}
+                title={link.title}
               >
                 {link.icon}
-                {sidebarOpen && <span>{link.title}</span>}
+                <span className="lg:hidden xl:block">{link.title}</span>
               </Link>
             );
           })}
         </nav>
 
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100">
-          <div className={`flex items-center gap-3 ${sidebarOpen ? "" : "justify-center"}`}>
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-              <span className="text-primary-700 font-semibold">
-                {user?.name?.charAt(0) || "A"}
-              </span>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800 bg-neutral-900">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center flex-shrink-0 font-bold border border-yellow-500/30">
+              {user?.name?.charAt(0) || "A"}
             </div>
-            {sidebarOpen && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{user?.name || "Admin"}</p>
-                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-              </div>
-            )}
-            {sidebarOpen && (
-              <button
-                onClick={handleLogout}
-                className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors"
-                title="Logout"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </button>
-            )}
+            <div className="flex-1 min-w-0 lg:hidden xl:block">
+              <p className="text-sm font-medium text-white truncate">{user?.name || "Admin"}</p>
+              <p className="text-xs text-neutral-500 truncate">{user?.email}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="lg:hidden xl:block p-2 rounded-lg hover:bg-red-500/10 text-neutral-500 hover:text-red-500 transition-colors ml-auto"
+              title="Logout"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-20"}`}>
+      <div className={`transition-all duration-300 min-h-screen flex flex-col ${
+        sidebarOpen ? "lg:ml-20 xl:ml-64" : "lg:ml-20 xl:ml-64"
+      }`}>
         {/* Header */}
-        <header className="sticky top-0 z-40 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">
+        <header className="sticky top-0 z-30 h-16 bg-black/80 backdrop-blur-md border-b border-neutral-800 flex items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-2 text-neutral-400 hover:text-white"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <h1 className="text-lg font-bold text-white">
               {sidebarLinks.find((l) => l.href === pathname)?.title || "Dashboard"}
             </h1>
           </div>
+          
           <div className="flex items-center gap-4">
             <Link
               href="/"
               target="_blank"
-              className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              className="px-3 py-1.5 text-xs font-medium bg-neutral-900 border border-neutral-800 rounded-lg text-neutral-400 hover:text-white hover:border-neutral-700 transition-colors flex items-center gap-2"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              View Site
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Live Site
             </Link>
-            <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-            </button>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 overflow-x-hidden">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Hello");
@@ -27,9 +28,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">{greeting}, {userName}! 👋</h2>
-        <p className="text-primary-100">
+      <div className="bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-2xl p-6 text-black shadow-lg shadow-yellow-500/20">
+        <h2 className="text-2xl font-black mb-2">{greeting}, {userName}! 👋</h2>
+        <p className="text-black/80 font-medium max-w-2xl">
           Welcome to your ToolsVault dashboard. Manage your tools, blog posts, and settings here.
         </p>
       </div>
@@ -81,9 +82,9 @@ export default function DashboardPage() {
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+        <div className="bg-neutral-900 rounded-xl border border-neutral-800 shadow-sm">
+          <div className="p-6 border-b border-neutral-800">
+            <h3 className="text-lg font-bold text-white">Quick Actions</h3>
           </div>
           <div className="p-6 space-y-4">
             <QuickAction
@@ -95,7 +96,7 @@ export default function DashboardPage() {
               }
               title="Write Blog Post"
               description="Create SEO-friendly content"
-              color="purple"
+              color="yellow"
             />
             <QuickAction
               href="/admin/analytics"
@@ -106,7 +107,7 @@ export default function DashboardPage() {
               }
               title="View Analytics"
               description="Check traffic and performance"
-              color="green"
+              color="blue"
             />
             <QuickAction
               href="/admin/settings"
@@ -123,9 +124,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Getting Started Checklist */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-          <div className="p-6 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900">Getting Started</h3>
+        <div className="bg-neutral-900 rounded-xl border border-neutral-800 shadow-sm">
+          <div className="p-6 border-b border-neutral-800">
+            <h3 className="text-lg font-bold text-white">Getting Started</h3>
           </div>
           <div className="p-6">
             <ul className="space-y-4">
@@ -144,51 +145,52 @@ export default function DashboardPage() {
 
 function StatCard({ title, value, subtitle, icon }: { title: string; value: string; subtitle?: string; icon: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+    <div className="bg-neutral-900 rounded-xl p-6 border border-neutral-800 shadow-sm hover:border-yellow-500/30 transition-all">
       <div className="flex items-center justify-between mb-4">
-        <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600">
+        <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
           {icon}
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-1">{value}</h3>
-      <p className="text-sm text-gray-500">{title}</p>
-      {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
+      <h3 className="text-2xl font-bold text-white mb-1">{value}</h3>
+      <p className="text-sm text-neutral-400">{title}</p>
+      {subtitle && <p className="text-xs text-neutral-500 mt-1">{subtitle}</p>}
     </div>
   );
 }
 
 function QuickAction({ href, icon, title, description, color }: { href: string; icon: React.ReactNode; title: string; description: string; color: string }) {
   const colorClasses: Record<string, string> = {
-    blue: "bg-blue-50 text-blue-600",
-    purple: "bg-purple-50 text-purple-600",
-    green: "bg-green-50 text-green-600",
-    orange: "bg-orange-50 text-orange-600",
+    yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+    blue: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    purple: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+    green: "bg-green-500/10 text-green-500 border-green-500/20",
+    orange: "bg-orange-500/10 text-orange-500 border-orange-500/20",
   };
   
   return (
-    <a href={href} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClasses[color]}`}>
+    <Link href={href} className="flex items-center gap-4 p-4 rounded-xl border border-neutral-800 hover:bg-neutral-800 transition-colors group">
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${colorClasses[color]}`}>
         {icon}
       </div>
       <div>
-        <p className="font-medium text-gray-900">{title}</p>
-        <p className="text-sm text-gray-500">{description}</p>
+        <p className="font-bold text-white group-hover:text-yellow-500 transition-colors">{title}</p>
+        <p className="text-sm text-neutral-500">{description}</p>
       </div>
-    </a>
+    </Link>
   );
 }
 
 function ChecklistItem({ title, done = false }: { title: string; done?: boolean }) {
   return (
     <li className="flex items-center gap-3">
-      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${done ? "bg-green-500" : "bg-gray-200"}`}>
+      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${done ? "bg-yellow-500" : "bg-neutral-800 border border-neutral-700"}`}>
         {done && (
-          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
         )}
       </div>
-      <span className={done ? "text-gray-500 line-through" : "text-gray-700"}>{title}</span>
+      <span className={done ? "text-neutral-500 line-through" : "text-neutral-300"}>{title}</span>
     </li>
   );
 }
