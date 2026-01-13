@@ -36,6 +36,11 @@ export const metadata: Metadata = {
   authors: [{ name: "ToolsVault" }],
   creator: "ToolsVault",
   metadataBase: new URL("https://tools-vault.app"),
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
