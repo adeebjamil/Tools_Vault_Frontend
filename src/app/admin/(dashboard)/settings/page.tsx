@@ -7,8 +7,8 @@ export default function SettingsPage() {
     siteName: "ToolsVault",
     tagline: "Your Digital Toolkit, Always Free",
     email: "hello@tools-vault.app",
-    adsenseId: "",
-    analyticsId: "",
+    adsenseId: "ca-pub-xxxxxxxxxx",
+    analyticsId: "G-XXXXXXXXXX",
   });
 
   const handleSave = () => {
