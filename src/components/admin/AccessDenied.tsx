@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function AccessDenied() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white p-4">
+    <div className="min-h-screen flex items-center justify-center bg-black text-white p-4">
       <div className="text-center max-w-lg">
         <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20 shadow-xl shadow-red-500/5">
           <svg className="w-12 h-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
