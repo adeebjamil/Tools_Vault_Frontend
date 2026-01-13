@@ -699,6 +699,15 @@
   display: none;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Responsive prose for mobile */
 @media (max-width: 640px) {
   .prose h2 {

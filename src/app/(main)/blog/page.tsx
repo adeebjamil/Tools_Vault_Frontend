@@ -107,8 +107,8 @@ export default function BlogPage() {
       <section className="relative pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 overflow-hidden bg-black">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-black" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-blue-600/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-cyan-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] sm:w-[1000px] h-[300px] sm:h-[500px] bg-blue-600/10 rounded-full blur-[80px] sm:blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[200px] sm:w-[600px] h-[200px] sm:h-[400px] bg-cyan-600/10 rounded-full blur-[60px] sm:blur-[120px]" />
         
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-3xl mx-auto">
@@ -155,7 +155,7 @@ export default function BlogPage() {
 
       {/* Categories */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-10 sm:mb-16">
-        <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap scrollbar-hide">
+        <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap no-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat.id}
@@ -208,7 +208,7 @@ export default function BlogPage() {
 
               {/* Newsletter Signup */}
               <form onSubmit={handleSubscribe} className="max-w-md mx-auto mb-12">
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
                     value={email}
@@ -313,8 +313,8 @@ export default function BlogPage() {
                         <div className={`w-full h-full bg-gradient-to-br ${CATEGORY_CONFIG[featuredPost.category]?.color || "from-purple-600 to-pink-600"} opacity-30`} />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 to-transparent" />
-                      <div className="absolute top-4 left-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${CATEGORY_CONFIG[featuredPost.category]?.color || "from-purple-500 to-pink-500"} text-white`}>
+                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+                        <span className={`px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-gradient-to-r ${CATEGORY_CONFIG[featuredPost.category]?.color || "from-purple-500 to-pink-500"} text-white`}>
                           {featuredPost.category?.replace("-", " ")}
                         </span>
                       </div>
