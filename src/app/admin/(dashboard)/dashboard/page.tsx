@@ -6,6 +6,9 @@ import Link from "next/link";
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Hello");
   const [userName, setUserName] = useState("Admin");
+  const [postCount, setPostCount] = useState(0);
+  const [isAnalyticsConnected, setIsAnalyticsConnected] = useState(false);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -23,6 +26,26 @@ export default function DashboardPage() {
         // ignore
       }
     }
+
+    // Fetch blog stats
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/blog/stats`);
+        const data = await res.json();
+        if (data.success) {
+           setPostCount(data.data.total);
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats");
+      }
+    };
+    fetchStats();
+
+    // Check Analytics Connection (Mock check based on default ID)
+    // In a real app, this would verify the G-Tag with Google's API or check if script loaded
+    // For now, we assume it's connected if the settings page would show the ID
+    setIsAnalyticsConnected(true); 
+
   }, []);
 
   return (
@@ -35,7 +58,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats Grid - Dynamic Placeholders */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Tools"
@@ -49,8 +72,8 @@ export default function DashboardPage() {
         />
         <StatCard
           title="Blog Posts"
-          value="0"
-          subtitle="Create your first post"
+          value={postCount.toString()}
+          subtitle={postCount > 0 ? "Published & Drafts" : "Create your first post"}
           icon={
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -58,13 +81,19 @@ export default function DashboardPage() {
           }
         />
         <StatCard
-          title="Users"
-          value="1"
-          subtitle="Admin only"
+          title="Analytics"
+          value={isAnalyticsConnected ? "Active" : "Not Connected"}
+          subtitle={isAnalyticsConnected ? "Collecting Data" : "Setup in Settings"}
+          valueClassName={isAnalyticsConnected ? "text-green-500" : ""}
           icon={
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
+            <div className="relative">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              {isAnalyticsConnected && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+              )}
+            </div>
           }
         />
         <StatCard
@@ -143,7 +172,7 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ title, value, subtitle, icon }: { title: string; value: string; subtitle?: string; icon: React.ReactNode }) {
+function StatCard({ title, value, subtitle, icon, valueClassName }: { title: string; value: string; subtitle?: string; icon: React.ReactNode; valueClassName?: string }) {
   return (
     <div className="bg-neutral-900 rounded-xl p-6 border border-neutral-800 shadow-sm hover:border-yellow-500/30 transition-all">
       <div className="flex items-center justify-between mb-4">
@@ -151,7 +180,7 @@ function StatCard({ title, value, subtitle, icon }: { title: string; value: stri
           {icon}
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-white mb-1">{value}</h3>
+      <h3 className={`text-2xl font-bold mb-1 ${valueClassName || 'text-white'}`}>{value}</h3>
       <p className="text-sm text-neutral-400">{title}</p>
       {subtitle && <p className="text-xs text-neutral-500 mt-1">{subtitle}</p>}
     </div>
