@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface Topic {
@@ -158,16 +157,16 @@ export default function BlogPage() {
       const data = await res.json();
       
       if (data.success) {
-        alert(`✅ Successfully generated ${data.data.generated} posts!`);
+        alert(`Successfully generated ${data.data.generated} posts!`);
         setShowGenerator(false);
         setSelectedTopic("");
         setPostCount(1);
         fetchPosts();
       } else {
-        alert(`❌ Error: ${data.error}`);
+        alert(`Error: ${data.error}`);
       }
     } catch (error) {
-      alert("❌ Failed to generate posts. Check your API configuration.");
+      alert("Failed to generate posts. Check your API configuration.");
     } finally {
       setIsGenerating(false);
     }
@@ -235,13 +234,13 @@ export default function BlogPage() {
         setShowEditor(false);
         setEditingPost(null);
         fetchPosts();
-        alert("✅ Post updated successfully!");
+        alert("Post updated successfully!");
       } else {
-        alert(`❌ Error: ${data.error}`);
+        alert(`Error: ${data.error}`);
       }
     } catch (error) {
       console.error("Failed to update:", error);
-      alert("❌ Failed to update post");
+      alert("Failed to update post");
     } finally {
       setIsSaving(false);
     }
@@ -266,16 +265,16 @@ export default function BlogPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Blog Posts</h1>
-          <p className="text-gray-500">AI-Powered Content Creation</p>
+          <h1 className="text-2xl font-bold text-white">Blog Posts</h1>
+          <p className="text-neutral-400">AI-Powered Content Creation</p>
         </div>
         <button
           onClick={() => setShowGenerator(true)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 bg-yellow-500 text-black rounded-lg font-bold hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/10 group"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
           AI Generate Posts
@@ -283,33 +282,60 @@ export default function BlogPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: "Total Posts", value: counts.total, color: "bg-blue-500" },
-          { label: "Drafts", value: counts.drafts, color: "bg-amber-500" },
-          { label: "Published", value: counts.published, color: "bg-green-500" },
+          { 
+            label: "Total Posts", 
+            value: counts.total, 
+            icon: (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+            )
+          },
+          { 
+            label: "Drafts", 
+            value: counts.drafts, 
+            icon: (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            )
+          },
+          { 
+            label: "Published", 
+            value: counts.published, 
+            icon: (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )
+          },
         ].map((stat) => (
-          <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center text-white font-bold`}>
-                {stat.value}
+          <div key={stat.label} className="bg-neutral-900 rounded-xl border border-neutral-800 p-5 group hover:border-yellow-500/30 transition-colors">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-neutral-400 font-medium text-sm">{stat.label}</p>
+                <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
               </div>
-              <span className="text-gray-600 font-medium">{stat.label}</span>
+              <div className="w-10 h-10 rounded-lg bg-neutral-800 text-yellow-500 flex items-center justify-center group-hover:bg-yellow-500 group-hover:text-black transition-colors">
+                {stat.icon}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-200 pb-4">
+      <div className="flex gap-2 border-b border-neutral-800 pb-1 overflow-x-auto">
         {(["all", "draft", "published"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-lg font-medium capitalize transition-all ${
+            className={`px-4 py-3 border-b-2 font-medium capitalize whitespace-nowrap transition-colors ${
               activeTab === tab
-                ? "bg-purple-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "border-yellow-500 text-yellow-500"
+                : "border-transparent text-neutral-400 hover:text-white hover:border-neutral-700"
             }`}
           >
             {tab}
@@ -320,17 +346,22 @@ export default function BlogPage() {
       {/* Posts List */}
       <div className="space-y-4">
         {isLoading ? (
-          <div className="text-center py-12">
-            <div className="w-8 h-8 border-2 border-purple-500/20 border-t-purple-500 rounded-full animate-spin mx-auto" />
+          <div className="text-center py-20">
+            <div className="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-neutral-500 mt-4 text-sm">Loading posts...</p>
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-12 bg-white border border-gray-200 rounded-xl">
-            <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No posts yet</h3>
-            <p className="text-gray-500 mb-4">Use AI to generate your first blog posts!</p>
+          <div className="text-center py-20 bg-neutral-900 border border-neutral-800 rounded-xl">
+            <div className="w-16 h-16 bg-neutral-800 text-neutral-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">No posts found</h3>
+            <p className="text-neutral-400 mb-6">Start by generating content with AI or create a new post.</p>
             <button
               onClick={() => setShowGenerator(true)}
-              className="px-6 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+              className="px-6 py-2.5 bg-yellow-500 text-black rounded-lg font-bold hover:bg-yellow-400 transition-colors"
             >
               Generate Posts
             </button>
@@ -339,42 +370,63 @@ export default function BlogPage() {
           posts.map((post) => (
             <div
               key={post._id}
-              className="bg-white border border-gray-200 rounded-xl p-5 hover:border-purple-300 transition-colors"
+              className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 hover:border-yellow-500/30 transition-all group"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              <div className="flex items-start justify-between gap-6">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide border ${
                       post.status === "published" 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-amber-100 text-amber-700"
+                        ? "bg-green-500/10 text-green-500 border-green-500/20" 
+                        : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
                     }`}>
                       {post.status}
                     </span>
                     {post.aiGenerated && (
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
-                        🤖 AI Generated
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        AI
                       </span>
                     )}
-                    <span className="text-gray-400 text-sm capitalize">{post.category?.replace("-", " ")}</span>
+                    <span className="text-neutral-500 text-xs font-medium uppercase tracking-wide px-2 py-0.5 bg-neutral-800 rounded-full border border-neutral-700">
+                      {post.category?.replace("-", " ")}
+                    </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{post.title}</h3>
-                  <p className="text-gray-500 text-sm line-clamp-2">{post.excerpt}</p>
-                  <div className="flex items-center gap-4 mt-3 text-sm text-gray-400">
-                    <span>📖 {post.readingTime || 5} min read</span>
-                    <span>📅 {formatDate(post.createdAt)}</span>
+                  
+                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-yellow-500 transition-colors truncate">
+                    {post.title}
+                  </h3>
+                  <p className="text-neutral-400 text-sm line-clamp-2 mb-4 leading-relaxed">
+                    {post.excerpt}
+                  </p>
+                  
+                  <div className="flex items-center gap-4 text-xs font-medium text-neutral-500">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {post.readingTime || 5} min read
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {formatDate(post.createdAt)}
+                    </span>
                   </div>
                 </div>
                 
                 {/* Featured Image Thumbnail */}
                 {post.featuredImage && (
-                  <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden bg-neutral-800 flex-shrink-0 border border-neutral-800">
                     <Image 
                       src={post.featuredImage} 
                       alt="" 
-                      width={80} 
-                      height={80} 
-                      className="w-full h-full object-cover"
+                      width={96} 
+                      height={96} 
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
                   </div>
                 )}
@@ -386,30 +438,42 @@ export default function BlogPage() {
                       setEditingPost(post);
                       setShowEditor(true);
                     }}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-colors"
+                    className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700"
+                    title="Edit"
                   >
-                    ✏️ Edit
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
                   </button>
                   {post.status === "draft" ? (
                     <button
                       onClick={() => handlePublish(post._id)}
-                      className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"
+                      className="p-2 text-green-500 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-colors border border-transparent hover:border-green-500/20"
+                      title="Publish"
                     >
-                      🚀 Publish
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                      </svg>
                     </button>
                   ) : (
                     <button
                       onClick={() => handleUnpublish(post._id)}
-                      className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm transition-colors"
+                      className="p-2 text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 rounded-lg transition-colors border border-transparent hover:border-yellow-500/20"
+                      title="Unpublish"
                     >
-                      📥 Unpublish
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                      </svg>
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(post._id)}
-                    className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm transition-colors"
+                    className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
+                    title="Delete"
                   >
-                    🗑️ Delete
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -425,7 +489,7 @@ export default function BlogPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
             onClick={() => !isGenerating && setShowGenerator(false)}
           >
             <motion.div
@@ -433,87 +497,87 @@ export default function BlogPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full"
+              className="bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl p-8 max-w-lg w-full"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center gap-4 mb-8 border-b border-neutral-800 pb-6">
+                <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center text-black shadow-lg shadow-yellow-500/20">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">AI Blog Generator</h2>
-                  <p className="text-gray-500 text-sm">Auto-generate SEO-optimized posts</p>
+                  <h2 className="text-xl font-bold text-white">AI Blog Generator</h2>
+                  <p className="text-neutral-400 text-sm">Create SEO-optimized posts in seconds</p>
                 </div>
               </div>
 
               {isGenerating ? (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Generating Posts...</h3>
-                  <p className="text-gray-500">Creating {postCount} post(s) about {topics.find(t => t.id === selectedTopic)?.name}</p>
-                  <p className="text-sm text-purple-600 mt-2">This may take a few moments...</p>
+                <div className="text-center py-10">
+                  <div className="w-20 h-20 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-6 opacity-80" />
+                  <h3 className="text-lg font-bold text-white mb-2">Generating Magic...</h3>
+                  <p className="text-neutral-400 max-w-xs mx-auto">Creating {postCount} post(s) about <span className="text-yellow-500 font-medium">{topics.find(t => t.id === selectedTopic)?.name}</span>. This might take a minute.</p>
                 </div>
               ) : (
                 <>
-                  {/* Number of posts */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Number of posts to create
+                    <label className="block text-sm font-bold text-white mb-3">
+                      Number of posts
                     </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={postCount}
-                      onChange={(e) => setPostCount(Math.min(10, Math.max(1, parseInt(e.target.value) || 1)))}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    />
-                    <p className="text-gray-400 text-xs mt-1">Maximum 10 posts per batch</p>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="range"
+                        min={1}
+                        max={5}
+                        value={postCount}
+                        onChange={(e) => setPostCount(parseInt(e.target.value))}
+                        className="flex-1 accent-yellow-500 h-2 bg-neutral-800 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="w-10 text-center font-bold text-yellow-500 text-xl">{postCount}</span>
+                    </div>
+                    <p className="text-neutral-600 text-xs mt-2 text-right">Max 5 posts per batch</p>
                   </div>
 
-                  {/* Topic selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <div className="mb-8">
+                    <label className="block text-sm font-bold text-white mb-3">
                       Select Topic
                     </label>
-                    <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
                       {topics.map((topic) => (
                         <button
                           key={topic.id}
                           onClick={() => setSelectedTopic(topic.id)}
                           className={`p-3 rounded-xl border text-left transition-all ${
                             selectedTopic === topic.id
-                              ? "border-purple-500 bg-purple-50 ring-2 ring-purple-500"
-                              : "border-gray-200 hover:border-purple-300"
+                              ? "border-yellow-500 bg-yellow-500/10 ring-1 ring-yellow-500"
+                              : "border-neutral-800 bg-neutral-800 hover:bg-neutral-800/80 hover:border-neutral-700"
                           }`}
                         >
-                          <div className="font-medium text-sm text-gray-900">{topic.name}</div>
-                          <div className="text-gray-400 text-xs mt-1 line-clamp-1">{topic.description}</div>
+                          <div className={`font-bold text-sm ${selectedTopic === topic.id ? "text-yellow-500" : "text-white"}`}>{topic.name}</div>
+                          <div className="text-neutral-500 text-xs mt-1 line-clamp-1">{topic.description}</div>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Start button */}
-                  <button
-                    onClick={handleGenerate}
-                    disabled={!selectedTopic}
-                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-                      selectedTopic
-                        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg"
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    }`}
-                  >
-                    🚀 Start Generating {postCount} Post{postCount > 1 ? "s" : ""}
-                  </button>
-
-                  <button
-                    onClick={() => setShowGenerator(false)}
-                    className="w-full py-3 text-gray-500 hover:text-gray-700 transition-colors mt-3"
-                  >
-                    Cancel
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowGenerator(false)}
+                      className="flex-1 py-3.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl font-bold transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleGenerate}
+                      disabled={!selectedTopic}
+                      className={`flex-[2] py-3.5 rounded-xl font-bold transition-all ${
+                        selectedTopic
+                          ? "bg-yellow-500 text-black hover:bg-yellow-400 hover:shadow-lg hover:shadow-yellow-500/20"
+                          : "bg-neutral-800 text-neutral-500 cursor-not-allowed"
+                      }`}
+                    >
+                      Start Generating
+                    </button>
+                  </div>
                 </>
               )}
             </motion.div>
@@ -528,7 +592,7 @@ export default function BlogPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
             onClick={() => !isSaving && setShowEditor(false)}
           >
             <motion.div
@@ -536,37 +600,47 @@ export default function BlogPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Edit Post</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">Edit Post</h2>
+                <button 
+                  onClick={() => setShowEditor(false)}
+                  className="text-neutral-500 hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
-              <div className="space-y-5">
+              <div className="space-y-6">
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <label className="block text-sm font-medium text-neutral-400 mb-2">Title</label>
                   <input
                     type="text"
                     value={editingPost.title}
                     onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                    className="w-full border border-neutral-700 bg-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white font-medium"
                   />
                 </div>
 
                 {/* Excerpt */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt</label>
+                  <label className="block text-sm font-medium text-neutral-400 mb-2">Excerpt</label>
                   <textarea
                     value={editingPost.excerpt}
                     onChange={(e) => setEditingPost({ ...editingPost, excerpt: e.target.value })}
                     rows={2}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none bg-white text-gray-900"
+                    className="w-full border border-neutral-700 bg-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none text-white text-sm"
                   />
                 </div>
 
                 {/* Featured Image Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-purple-400 transition-colors">
+                  <label className="block text-sm font-medium text-neutral-400 mb-2">Featured Image</label>
+                  <div className="border-2 border-dashed border-neutral-700 bg-neutral-800/30 rounded-xl p-4 hover:border-yellow-500/50 hover:bg-neutral-800/50 transition-all group">
                     {editingPost.featuredImage ? (
                       <div className="relative">
                         <Image 
@@ -578,30 +652,32 @@ export default function BlogPage() {
                         />
                         <button
                           onClick={() => setEditingPost({ ...editingPost, featuredImage: null })}
-                          className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                          className="absolute top-3 right-3 w-8 h-8 bg-black/50 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-colors"
                         >
-                          ✕
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
                         </button>
                       </div>
                     ) : (
                       <div 
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-center cursor-pointer py-8"
+                        className="text-center cursor-pointer py-10"
                       >
                         {isUploading ? (
                           <div className="flex flex-col items-center">
-                            <div className="w-8 h-8 border-2 border-purple-500/20 border-t-purple-500 rounded-full animate-spin mb-2" />
-                            <span className="text-gray-500">Uploading...</span>
+                            <div className="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mb-3" />
+                            <span className="text-neutral-400 text-sm">Uploading...</span>
                           </div>
                         ) : (
                           <>
-                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="w-14 h-14 bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-neutral-700 transition-colors">
+                              <svg className="w-7 h-7 text-neutral-400 group-hover:text-yellow-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                             </div>
-                            <p className="text-gray-600 font-medium">Click to upload image</p>
-                            <p className="text-gray-400 text-sm mt-1">PNG, JPG up to 5MB</p>
+                            <p className="text-white font-bold">Click to upload image</p>
+                            <p className="text-neutral-500 text-sm mt-1">PNG, JPG, WebP up to 5MB</p>
                           </>
                         )}
                       </div>
@@ -618,37 +694,37 @@ export default function BlogPage() {
 
                 {/* Content */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Content (Markdown)</label>
+                  <label className="block text-sm font-medium text-neutral-400 mb-2">Content (Markdown)</label>
                   <textarea
                     value={editingPost.content}
                     onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
                     rows={12}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none font-mono text-sm bg-white text-gray-900"
+                    className="w-full border border-neutral-700 bg-neutral-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none font-mono text-sm text-neutral-300 leading-relaxed"
                   />
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    onClick={handleUpdate}
-                    disabled={isSaving}
-                    className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
-                  >
-                    {isSaving ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>💾 Save Changes</>
-                    )}
-                  </button>
+                <div className="flex gap-3 pt-4 border-t border-neutral-800">
                   <button
                     onClick={() => setShowEditor(false)}
                     disabled={isSaving}
-                    className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors"
+                    className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl font-bold transition-colors"
                   >
                     Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdate}
+                    disabled={isSaving}
+                    className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-black rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>Save Changes</>
+                    )}
                   </button>
                 </div>
               </div>
