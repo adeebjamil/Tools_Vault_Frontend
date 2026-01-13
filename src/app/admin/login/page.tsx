@@ -138,12 +138,7 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
-            <p className="text-xs text-gray-500 mb-2">Demo Credentials:</p>
-            <p className="text-sm font-mono text-gray-300">Email: admin@gmail.com</p>
-            <p className="text-sm font-mono text-gray-300">Password: 12345</p>
-          </div>
+         
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">
