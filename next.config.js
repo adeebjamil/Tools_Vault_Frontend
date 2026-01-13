@@ -59,7 +59,7 @@ const nextConfig = {
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                             "font-src 'self' https://fonts.gstatic.com",
                             "img-src 'self' data: blob: https: http:",
-                            "connect-src 'self' https://api.qrserver.com https://tools-vault-backend.onrender.com https://vercel.live https://*.vercel.live",
+                            "connect-src 'self' https://api.qrserver.com https://tools-vault-backend.onrender.com http://localhost:5000 https://vercel.live https://*.vercel.live",
                             "frame-src 'self' https://challenges.cloudflare.com https://vercel.live https://*.vercel.live",
                         ].join('; '),
                     },
