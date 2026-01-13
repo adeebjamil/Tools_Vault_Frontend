@@ -64,13 +64,15 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md relative z-10 px-4">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center text-black font-bold text-xl">
-              TV
-            </div>
-            <span className="text-3xl font-bold tracking-tighter text-white">
-              Tools<span className="text-yellow-500">Vault</span>
-            </span>
+          <div className="inline-flex items-center justify-center gap-3 mb-4">
+            <Image 
+              src="/logo1.png" 
+              alt="ToolsVault Logo" 
+              width={240} 
+              height={80}
+              className="h-20 w-auto object-contain"
+              priority
+            />
           </div>
           <h1 className="text-2xl font-bold text-white">Admin Login</h1>
           <p className="text-neutral-500 mt-2">Sign in to access the dashboard</p>
