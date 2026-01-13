@@ -167,8 +167,9 @@ export default function SettingsPage() {
                <input
                  type="email"
                  value={user.email}
-                 onChange={(e) => setUser({ ...user, email: e.target.value })}
-                 className="w-full border border-neutral-700 bg-neutral-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                 disabled
+                 className="w-full border border-neutral-700 bg-neutral-900 rounded-xl px-4 py-2.5 text-neutral-500 cursor-not-allowed focus:outline-none"
+                 title="Email cannot be changed"
                />
              </div>
           </div>
