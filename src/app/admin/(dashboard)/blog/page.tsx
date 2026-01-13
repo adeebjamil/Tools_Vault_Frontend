@@ -157,13 +157,20 @@ export default function BlogPage() {
       const data = await res.json();
       
       if (data.success) {
-        alert(`Successfully generated ${data.data.generated} posts!`);
-        setShowGenerator(false);
-        setSelectedTopic("");
-        setPostCount(1);
-        fetchPosts();
+        if (data.data && data.data.generated > 0) {
+          alert(`✅ Successfully generated ${data.data.generated} posts!`);
+          setShowGenerator(false);
+          setSelectedTopic("");
+          setPostCount(1);
+          fetchPosts();
+        } else {
+           // Handle case where success=true but 0 generated (all failed)
+           const firstError = data.data?.errors?.[0]?.error || "Unknown error";
+           console.error("Generation failed:", data.data?.errors);
+           alert(`❌ Generation failed: ${firstError}`);
+        }
       } else {
-        alert(`Error: ${data.error}`);
+        alert(`❌ Error: ${data.error}`);
       }
     } catch (error) {
       alert("Failed to generate posts. Check your API configuration.");
