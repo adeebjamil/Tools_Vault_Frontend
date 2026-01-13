@@ -69,12 +69,15 @@ const sidebarLinks = [
   },
 ];
 
+import AccessDenied from "@/components/admin/AccessDenied";
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(true);
 
   useEffect(() => {
     // Check for authentication
@@ -89,10 +92,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     try {
       const parsedUser = JSON.parse(userData);
       if (parsedUser.role !== "admin") {
-        router.push("/admin/login");
+        setIsAuthorized(false);
+        setLoading(false);
         return;
       }
       setUser(parsedUser);
+      setIsAuthorized(true);
     } catch {
       router.push("/admin/login");
     }
@@ -112,6 +117,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full" />
       </div>
     );
+  }
+
+  if (!isAuthorized) {
+    return <AccessDenied />;
   }
 
   return (
