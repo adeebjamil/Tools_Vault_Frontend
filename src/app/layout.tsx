@@ -73,6 +73,7 @@ export const metadata: Metadata = {
   },
 };
 
+import Script from "next/script";
 import CookieConsent from "@/components/ui/CookieConsent";
 
 export default function RootLayout({
@@ -83,6 +84,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className={`${inter.className} antialiased min-h-screen bg-slate-950 text-white`} suppressHydrationWarning>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-PV693NH7XE"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-PV693NH7XE');
+          `}
+        </Script>
         {children}
         <CookieConsent />
       </body>
