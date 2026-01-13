@@ -19,7 +19,9 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://tools-vault-backend.onrender.com";
+      console.log("Attempting login to:", `${API_URL}/api/auth/login`);
+      
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -39,8 +41,9 @@ export default function AdminLoginPage() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       router.push("/admin/dashboard");
-    } catch {
-      setError("Server error. Please try again.");
+    } catch (err) {
+      console.error("Login Error:", err);
+      setError("Server connection failed. Check console for details.");
       setLoading(false);
     }
   };
