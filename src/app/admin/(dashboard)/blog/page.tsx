@@ -46,6 +46,7 @@ export default function BlogPage() {
   const [selectedTopic, setSelectedTopic] = useState("");
   const [postCount, setPostCount] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [progress, setProgress] = useState(0);
   
   // Edit state
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
@@ -146,6 +147,17 @@ export default function BlogPage() {
     if (!selectedTopic || postCount < 1) return;
     
     setIsGenerating(true);
+    setProgress(0);
+
+    // Simulate progress
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 95) return 95;
+        // Faster at start, slower at end
+        const increment = prev < 50 ? 5 : prev < 80 ? 2 : 0.5;
+        return prev + increment;
+      });
+    }, 800); // Update every 800ms
 
     try {
       const res = await fetch(`${API_URL}/api/blog/generate`, {
@@ -156,6 +168,12 @@ export default function BlogPage() {
 
       const data = await res.json();
       
+      clearInterval(interval);
+      setProgress(100);
+      
+      // Small delay to show 100%
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       if (data.success) {
         if (data.data && data.data.generated > 0) {
           alert(`✅ Successfully generated ${data.data.generated} posts!`);
@@ -173,9 +191,11 @@ export default function BlogPage() {
         alert(`❌ Error: ${data.error}`);
       }
     } catch (error) {
+      clearInterval(interval);
       alert("Failed to generate posts. Check your API configuration.");
     } finally {
       setIsGenerating(false);
+      setProgress(0);
     }
   };
 
@@ -520,9 +540,40 @@ export default function BlogPage() {
 
               {isGenerating ? (
                 <div className="text-center py-10">
-                  <div className="w-20 h-20 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-6 opacity-80" />
-                  <h3 className="text-lg font-bold text-white mb-2">Generating Magic...</h3>
-                  <p className="text-neutral-400 max-w-xs mx-auto">Creating {postCount} post(s) about <span className="text-yellow-500 font-medium">{topics.find(t => t.id === selectedTopic)?.name}</span>. This might take a minute.</p>
+                  <div className="relative w-24 h-24 mx-auto mb-6">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="transparent"
+                        className="text-neutral-800"
+                      />
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="transparent"
+                        strokeDasharray={251.2}
+                        strokeDashoffset={251.2 - (251.2 * progress) / 100}
+                        className="text-yellow-500 transition-all duration-300 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xl font-bold text-white">{Math.round(progress)}%</span>
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">Generating Content...</h3>
+                  <p className="text-neutral-400 max-w-xs mx-auto text-sm animate-pulse">
+                    {progress < 30 && "Analyzing topic requirements..."}
+                    {progress >= 30 && progress < 60 && "Drafting comprehensive articles..."}
+                    {progress >= 60 && progress < 90 && "Optimizing for SEO & formatting..."}
+                    {progress >= 90 && "Finalizing and saving..."}
+                  </p>
                 </div>
               ) : (
                 <>
