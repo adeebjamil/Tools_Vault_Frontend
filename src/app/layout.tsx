@@ -90,6 +90,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  other: {
+    "google-adsense-account": "ca-pub-3438035521734279",
+  },
 };
 
 import Script from "next/script";
