@@ -2,9 +2,42 @@
 
 import { useInView } from "@/hooks/useInView";
 import { upcomingTools } from "@/lib/constants";
+import { useState } from "react";
 
 export default function UpcomingSection() {
   const { ref, isInView } = useInView(0.1);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubscribe = async () => {
+    if (!email) return;
+    setStatus("loading");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/connections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "newsletter",
+          email: email,
+          name: "Upcoming Tools Subscriber",
+          message: "Subscribed via Upcoming Tools section"
+        })
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    } finally {
+      if(status !== "success") { 
+         setTimeout(() => setStatus("idle"), 3000); 
+      }
+    }
+  };
 
   return (
     <section className="py-24 px-6 bg-black relative overflow-hidden">
@@ -77,27 +110,53 @@ export default function UpcomingSection() {
         
         {/* Newsletter Signup */}
         <div className="mt-16 text-center">
-          <div className="inline-block p-8 rounded-3xl border border-blue-500/20 bg-neutral-900/50 backdrop-blur-sm max-w-xl">
+          <div className="inline-block p-8 rounded-3xl border border-blue-500/20 bg-neutral-900/50 backdrop-blur-sm max-w-xl w-full">
             <h3 className="text-xl font-bold text-white mb-2">Get Notified When We Launch</h3>
             <p className="text-neutral-400 text-sm mb-6">
               Be the first to know when new tools are available. No spam, just updates.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-5 py-3 rounded-full bg-black/50 border border-blue-500/20 text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors"
-              />
-              <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-full hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            
+            {status === "success" ? (
+              <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-4 text-green-400 font-bold flex items-center justify-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Notify Me
-              </button>
-            </div>
+                You&apos;re on the list!
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="flex-1 px-5 py-3 rounded-full bg-black/50 border border-blue-500/20 text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+                />
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={status === "loading" || !email}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-full hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {status === "loading" ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                      </svg>
+                      Notify Me
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+             {status === "error" && (
+                <p className="text-red-500 text-sm mt-3">Something went wrong. Please try again.</p>
+             )}
           </div>
         </div>
       </div>
     </section>
   );
 }
+

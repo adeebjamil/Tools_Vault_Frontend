@@ -5,11 +5,12 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Zap, FileText, Info } from "lucide-react";
 
 const navLinks = [
-  { href: "/tools", label: "Tools", icon: "⚡" },
-  { href: "/blog", label: "Blog", icon: "📝" },
-  { href: "/about", label: "About", icon: "ℹ️" },
+  { href: "/tools", label: "Tools", icon: Zap, color: "text-blue-500" },
+  { href: "/blog", label: "Blog", icon: FileText, color: "text-blue-500" },
+  { href: "/about", label: "About", icon: Info, color: "text-blue-500" },
 ];
 
 export default function Header() {
@@ -155,9 +156,9 @@ export default function Header() {
                     <Link
                       href={link.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors min-h-0"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors min-h-0 group"
                     >
-                      <span className="text-lg">{link.icon}</span>
+                      <link.icon className={cn("w-5 h-5", link.color)} />
                       <span className="text-white font-medium">{link.label}</span>
                     </Link>
                   </motion.div>

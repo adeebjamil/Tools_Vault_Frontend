@@ -88,7 +88,7 @@ const tools = [
     id: "hash-generator",
     title: "Hash Generator",
     description: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from text or files.",
-    image: "/toolsimages/hashgenerator.png",
+    image: "/toolsimages/hashgenerator.webp",
     category: "Security",
     href: "/tools/hash-generator",
   },
@@ -107,6 +107,39 @@ const categories = ["All", "Developer", "Text", "Design", "Utility", "Security"]
 export default function ToolsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+
+  const [email, setEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubscribe = async () => {
+    if (!email) return;
+    setNewsletterStatus("loading");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/connections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "newsletter",
+          email: email,
+          name: "Upcoming Tools Wishlist",
+          message: "Subscribed via Tools Page Upcoming Section"
+        })
+      });
+
+      if (res.ok) {
+        setNewsletterStatus("success");
+        setEmail("");
+      } else {
+        setNewsletterStatus("error");
+      }
+    } catch {
+      setNewsletterStatus("error");
+    } finally {
+      if(newsletterStatus !== "success") { 
+         setTimeout(() => setNewsletterStatus("idle"), 3000); 
+      }
+    }
+  };
 
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
@@ -352,132 +385,171 @@ export default function ToolsPage() {
       </section>
 
       {/* Upcoming Tools Section */}
-      <section className="py-20 relative overflow-hidden">
-        
+      <section className="py-24 bg-black relative overflow-hidden">
+        {/* Ambient Background Effects */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[128px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[128px] pointer-events-none" />
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-12">
-            <span className="badge mb-4 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border-purple-500/30 text-purple-300">
-              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse mr-2" />
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-blue-400 text-sm font-semibold tracking-wide mb-6 shadow-lg shadow-blue-900/10">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+              </span>
               Coming Soon
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Stay Tuned for <span className="gradient-text">Upcoming Tools</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
+              Stay Tuned for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Upcoming Tools</span>
             </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium">
               We&apos;re building powerful AI-powered automation tools to help you scale your business.
+              Get early access before everyone else.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Bulk Email & WhatsApp */}
-            <div className="card p-0 overflow-hidden group hover:border-purple-500/30">
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+            {/* Card 1: Bulk Email & WhatsApp */}
+            <div className="group relative bg-[#0F1115] border border-white/5 rounded-[2rem] overflow-hidden hover:border-purple-500/30 transition-all duration-500">
+              {/* Image Section */}
+              <div className="relative h-64 w-full overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0F1115] z-10" />
                 <img
                   src="/toolsimages/bulkemailand whatappsender.jpg"
                   alt="Bulk Email & WhatsApp Sender"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
-                <span className="absolute top-4 left-4 inline-block text-xs font-medium px-3 py-1 rounded-full bg-purple-500/30 backdrop-blur-sm text-purple-200 border border-purple-500/30">
-                  AI Powered
-                </span>
+                
+                {/* Badge */}
+                <div className="absolute top-6 left-6 z-20">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/20 backdrop-blur-md border border-purple-500/20 text-purple-300 text-xs font-bold uppercase tracking-wider">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    AI Powered
+                  </div>
+                </div>
               </div>
               
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">
+              {/* Content Section */}
+              <div className="p-8 pt-2">
+                <h3 className="text-2xl font-bold text-white mb-3">
                   Bulk Email & WhatsApp Sender
                 </h3>
-                <p className="text-gray-400 text-sm mb-4">
-                  Automate your outreach with AI-powered bulk messaging. Send personalized emails and WhatsApp messages at scale.
+                <p className="text-gray-400 mb-8 leading-relaxed text-sm">
+                  Automate your outreach with AI-powered bulk messaging. Send personalized emails and WhatsApp messages at scale with intelligent scheduling.
                 </p>
-                <ul className="space-y-2 text-sm text-gray-500">
-                  <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    AI-generated personalized messages
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Schedule and automate campaigns
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Analytics and tracking dashboard
-                  </li>
-                </ul>
+                
+                {/* Features */}
+                <div className="space-y-4">
+                  {[
+                    "AI-generated personalized messages",
+                    "Schedule and automate campaigns",
+                    "Analytics and tracking dashboard"
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-[#1A1D24] flex items-center justify-center flex-shrink-0">
+                        <svg className="w-3.5 h-3.5 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+                        </svg>
+                      </div>
+                      <span className="text-gray-300 text-sm font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* AI Content Marketing */}
-            <div className="card p-0 overflow-hidden group hover:border-cyan-500/30">
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
+            {/* Card 2: AI Content Marketing */}
+            <div className="group relative bg-[#0F1115] border border-white/5 rounded-[2rem] overflow-hidden hover:border-cyan-500/30 transition-all duration-500">
+              {/* Image Section */}
+              <div className="relative h-64 w-full overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0F1115] z-10" />
                 <img
                   src="/toolsimages/AIautomationandconetnet marketing.webp"
                   alt="AI Content Marketing Automation"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
-                <span className="absolute top-4 left-4 inline-block text-xs font-medium px-3 py-1 rounded-full bg-cyan-500/30 backdrop-blur-sm text-cyan-200 border border-cyan-500/30">
-                  Multi-Platform
-                </span>
+                
+                {/* Badge */}
+                <div className="absolute top-6 left-6 z-20">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 backdrop-blur-md border border-cyan-500/20 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    Multi-Platform
+                  </div>
+                </div>
               </div>
               
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">
+              {/* Content Section */}
+              <div className="p-8 pt-2">
+                <h3 className="text-2xl font-bold text-white mb-3">
                   AI Content Marketing Automation
                 </h3>
-                <p className="text-gray-400 text-sm mb-4">
-                  Create, schedule, and publish content across Meta, Instagram, and LinkedIn automatically.
+                <p className="text-gray-400 mb-8 leading-relaxed text-sm">
+                  Create, schedule, and publish content across Meta, Instagram, and LinkedIn automatically. Let AI handle your social presence.
                 </p>
-                <ul className="space-y-2 text-sm text-gray-500">
-                  <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    AI-powered content generation
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Cross-platform scheduling
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Performance insights & optimization
-                  </li>
-                </ul>
+                
+                {/* Features */}
+                <div className="space-y-4">
+                  {[
+                    "AI-powered content generation",
+                    "Cross-platform scheduling & posting",
+                    "Performance insights & optimization"
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-[#1A1D24] flex items-center justify-center flex-shrink-0">
+                        <svg className="w-3.5 h-3.5 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+                        </svg>
+                      </div>
+                      <span className="text-gray-300 text-sm font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Notify CTA */}
-          <div className="text-center mt-12">
-            <p className="text-gray-400 mb-4">Want to be the first to know when these tools launch?</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="input flex-1"
-              />
-              <button className="btn btn-primary whitespace-nowrap">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                Notify Me
-              </button>
-            </div>
+          <div className="relative max-w-xl mx-auto text-center">
+            <h3 className="text-lg text-gray-300 mb-6 font-medium">Want to be the first to know when these tools launch?</h3>
+            
+            {newsletterStatus === "success" ? (
+               <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 flex items-center justify-center gap-3 text-green-400 font-bold animate-fade-in">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Success! You&apos;ve been added to the waitlist.
+               </div>
+            ) : (
+              <div className="flex p-1.5 bg-[#0F1115] border border-white/10 rounded-2xl shadow-xl">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="flex-1 px-4 bg-transparent text-white placeholder-gray-500 focus:outline-none font-medium h-12"
+                />
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={newsletterStatus === "loading" || !email}
+                  className="px-6 h-12 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
+                >
+                  {newsletterStatus === "loading" ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Notify Me
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+             {newsletterStatus === "error" && (
+              <p className="text-red-400 text-sm mt-4 font-medium">Something went wrong. Please try again later.</p>
+             )}
           </div>
         </div>
       </section>

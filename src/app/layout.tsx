@@ -94,6 +94,7 @@ export const metadata: Metadata = {
 
 import Script from "next/script";
 import CookieConsent from "@/components/ui/CookieConsent";
+import AdSenseScript from "@/components/ads/AdSenseScript";
 
 export default function RootLayout({
   children,
@@ -116,6 +117,7 @@ export default function RootLayout({
             gtag('config', 'G-PV693NH7XE');
           `}
         </Script>
+        <AdSenseScript />
         {children}
         <CookieConsent />
       </body>

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 const footerLinks = {
   tools: [
@@ -21,6 +24,38 @@ const footerLinks = {
 };
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "success" | "error">("idle");
+
+  const handleSubscribe = async () => {
+    if (!email) return;
+    setSubscribing(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/connections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "newsletter",
+          email: email,
+          name: "Newsletter Subscriber",
+          message: "Subscribed to newsletter"
+        })
+      });
+
+      if (res.ok) {
+        setSubscribeStatus("success");
+        setEmail("");
+      } else {
+        setSubscribeStatus("error");
+      }
+    } catch {
+      setSubscribeStatus("error");
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-black relative overflow-hidden">
       {/* Background decorations */}
@@ -57,22 +92,37 @@ export default function Footer() {
             {/* Newsletter Signup */}
             <div className="mb-6">
               <p className="text-sm font-medium text-white mb-3">Stay updated</p>
-              <div className="flex gap-2">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2.5 bg-neutral-900/50 border border-blue-500/20 rounded-xl text-white text-sm placeholder:text-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors"
-                />
-                <button className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium text-sm rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all">
-                  Subscribe
-                </button>
-              </div>
+              {subscribeStatus === "success" ? (
+                <div className="text-green-500 text-sm font-bold flex items-center gap-2 bg-green-500/10 p-3 rounded-xl border border-green-500/20">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Subscribed successfully!
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="flex-1 px-4 py-2.5 bg-neutral-900/50 border border-blue-500/20 rounded-xl text-white text-sm placeholder:text-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+                  />
+                  <button 
+                    onClick={handleSubscribe}
+                    disabled={subscribing}
+                    className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium text-sm rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all disabled:opacity-50"
+                  >
+                    {subscribing ? "..." : "Subscribe"}
+                  </button>
+                </div>
+              )}
             </div>
             
             {/* Social Links */}
             <div className="flex gap-3">
               <a
-                href="https://twitter.com/toolsvault"
+                href="https://x.com/Tools_Vault"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-neutral-900/50 hover:bg-blue-500/20 border border-blue-500/20 hover:border-blue-500/40 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 group"
@@ -83,7 +133,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://github.com/toolsvault"
+                href="https://github.com/Mux071"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-neutral-900/50 hover:bg-blue-500/20 border border-blue-500/20 hover:border-blue-500/40 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 group"
@@ -94,7 +144,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com/company/toolsvault"
+                href="https://www.linkedin.com/in/adeeb-jamil-6540b6215/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-xl bg-neutral-900/50 hover:bg-blue-500/20 border border-blue-500/20 hover:border-blue-500/40 flex items-center justify-center transition-all duration-300 hover:-translate-y-1 group"
@@ -196,3 +246,4 @@ export default function Footer() {
     </footer>
   );
 }
+
