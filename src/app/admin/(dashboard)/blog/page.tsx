@@ -216,6 +216,23 @@ export default function BlogPage() {
     setIsUploading(false);
   };
 
+  // Internal Links State
+  const [internalLinks, setInternalLinks] = useState<{ anchor: string; url: string }[]>([]);
+  const [newLinkAnchor, setNewLinkAnchor] = useState("");
+  const [newLinkUrl, setNewLinkUrl] = useState("");
+
+  const handleAddLink = () => {
+    if (newLinkAnchor && newLinkUrl) {
+      setInternalLinks([...internalLinks, { anchor: newLinkAnchor, url: newLinkUrl }]);
+      setNewLinkAnchor("");
+      setNewLinkUrl("");
+    }
+  };
+
+  const handleRemoveLink = (index: number) => {
+    setInternalLinks(internalLinks.filter((_, i) => i !== index));
+  };
+  
   // Generate posts with AI
   const handleGenerate = async () => {
     if (!selectedTopic || postCount < 1) return;
@@ -237,7 +254,11 @@ export default function BlogPage() {
       const res = await fetch(`${API_URL}/api/blog/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: selectedTopic, count: postCount }),
+        body: JSON.stringify({ 
+          topic: selectedTopic, 
+          count: postCount,
+          internalLinks: internalLinks 
+        }),
       });
 
       const data = await res.json();
@@ -795,6 +816,52 @@ export default function BlogPage() {
                         </div>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Internal Links (Optional) */}
+                  <div className="mb-8">
+                    <label className="text-sm font-bold text-white mb-3 block">
+                      Internal Links (Optional for SEO)
+                    </label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                       <input
+                          type="text"
+                          value={newLinkAnchor}
+                          onChange={(e) => setNewLinkAnchor(e.target.value)}
+                          placeholder="Anchor Text (e.g. 'Read our guide')"
+                          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
+                        />
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newLinkUrl}
+                            onChange={(e) => setNewLinkUrl(e.target.value)}
+                            placeholder="URL (e.g. /tools/formatter)"
+                            className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
+                          />
+                          <button
+                            onClick={handleAddLink}
+                            disabled={!newLinkAnchor || !newLinkUrl}
+                            className="px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 disabled:opacity-50"
+                          >
+                            +
+                          </button>
+                        </div>
+                    </div>
+                    
+                    {/* List of added links */}
+                    {internalLinks.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {internalLinks.map((link, idx) => (
+                          <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs">
+                            <span className="font-bold">{link.anchor}</span>
+                            <span className="opacity-50">→</span>
+                            <span className="truncate max-w-[100px]">{link.url}</span>
+                            <button onClick={() => handleRemoveLink(idx)} className="hover:text-white ml-1">×</button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex gap-3">
