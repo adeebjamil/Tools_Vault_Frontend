@@ -173,9 +173,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-neutral-800">
           <Link href="/admin/dashboard" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-yellow-500 flex items-center justify-center text-black font-bold group-hover:scale-110 transition-transform">
-              TV
-            </div>
+            <img 
+              src="/logo1.png" 
+              alt="ToolsVault" 
+              className="w-10 h-10 object-contain group-hover:scale-110 transition-transform" 
+            />
             <span className="text-lg font-bold lg:hidden xl:block">
               Tools<span className="text-yellow-500">Vault</span>
             </span>
