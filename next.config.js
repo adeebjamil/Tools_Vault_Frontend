@@ -55,12 +55,12 @@ const nextConfig = {
                         key: 'Content-Security-Policy',
                         value: [
                             "default-src 'self'",
-                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://vercel.live https://*.vercel.live https://www.googletagmanager.com",
+                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://vercel.live https://*.vercel.live https://www.googletagmanager.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://googleads.g.doubleclick.net https://www.google.com https://adservice.google.com",
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                             "font-src 'self' https://fonts.gstatic.com",
-                            "img-src 'self' data: blob: https: http: https://www.googletagmanager.com",
-                            "connect-src 'self' https://api.qrserver.com https://tools-vault-backend.onrender.com http://localhost:5000 https://vercel.live https://*.vercel.live https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
-                            "frame-src 'self' https://challenges.cloudflare.com https://vercel.live https://*.vercel.live",
+                            "img-src 'self' data: blob: https: http: https://www.googletagmanager.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://www.google.com https://googleads.g.doubleclick.net",
+                            "connect-src 'self' https://api.qrserver.com https://tools-vault-backend.onrender.com http://localhost:5000 https://vercel.live https://*.vercel.live https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://adservice.google.com",
+                            "frame-src 'self' https://challenges.cloudflare.com https://vercel.live https://*.vercel.live https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://adservice.google.com",
                         ].join('; '),
                     },
                     // Strict Transport Security (HSTS) - Cloudflare will also add this
