@@ -53,6 +53,10 @@ export default function BlogPage() {
   const [isCreatingTopic, setIsCreatingTopic] = useState(false);
   const [showTopicInput, setShowTopicInput] = useState(false);
   
+  // Topic Edit/Delete State
+  const [editingTopic, setEditingTopic] = useState<string | null>(null); // Topic ID
+  const [updatedTopicName, setUpdatedTopicName] = useState("");
+
   // Edit state
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [showEditor, setShowEditor] = useState(false);
@@ -113,6 +117,45 @@ export default function BlogPage() {
       alert("Failed to create topic");
     } finally {
       setIsCreatingTopic(false);
+    }
+  };
+
+  const handleDeleteTopic = async (topicId: string) => {
+    if (!confirm("Are you sure you want to delete this topic?")) return;
+    try {
+      const res = await fetch(`${API_URL}/api/blog/topics/${topicId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTopics(topics.filter((t) => t.id !== topicId));
+        if (selectedTopic === topicId) setSelectedTopic("");
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      alert("Failed to delete topic");
+    }
+  };
+
+  const handleUpdateTopic = async (topicId: string) => {
+    if (!updatedTopicName.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/api/blog/topics/${topicId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: updatedTopicName }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTopics(topics.map((t) => (t.id === topicId ? data.data : t)));
+        setEditingTopic(null);
+        setUpdatedTopicName("");
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      alert("Failed to update topic");
     }
   };
 
@@ -672,18 +715,84 @@ export default function BlogPage() {
 
                     <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
                       {topics.map((topic) => (
-                        <button
+                        <div
                           key={topic.id}
-                          onClick={() => setSelectedTopic(topic.id)}
-                          className={`p-3 rounded-xl border text-left transition-all ${
+                          className={`relative p-3 rounded-xl border text-left transition-all group ${
                             selectedTopic === topic.id
                               ? "border-yellow-500 bg-yellow-500/10 ring-1 ring-yellow-500"
                               : "border-neutral-800 bg-neutral-800 hover:bg-neutral-800/80 hover:border-neutral-700"
                           }`}
+                          onClick={() => {
+                            if (editingTopic !== topic.id) setSelectedTopic(topic.id);
+                          }}
                         >
-                          <div className={`font-bold text-sm ${selectedTopic === topic.id ? "text-yellow-500" : "text-white"}`}>{topic.name}</div>
-                          <div className="text-neutral-500 text-xs mt-1 line-clamp-1">{topic.description}</div>
-                        </button>
+                          {editingTopic === topic.id ? (
+                            <div className="flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="text"
+                                value={updatedTopicName}
+                                onChange={(e) => setUpdatedTopicName(e.target.value)}
+                                className="w-full bg-neutral-900 border border-neutral-700 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-yellow-500"
+                                autoFocus
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleUpdateTopic(topic.id)}
+                                  className="px-2 py-1 bg-green-500/20 text-green-500 text-xs rounded hover:bg-green-500/30"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingTopic(null);
+                                    setUpdatedTopicName("");
+                                  }}
+                                  className="px-2 py-1 bg-neutral-700 text-neutral-400 text-xs rounded hover:bg-neutral-600"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1 min-w-0 pr-2">
+                                <div className={`font-bold text-sm truncate ${selectedTopic === topic.id ? "text-yellow-500" : "text-white"}`}>
+                                  {topic.name}
+                                </div>
+                                <div className="text-neutral-500 text-xs mt-1 line-clamp-1">
+                                  {topic.description}
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingTopic(topic.id);
+                                    setUpdatedTopicName(topic.name);
+                                  }}
+                                  className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-700 rounded"
+                                  title="Edit Topic"
+                                >
+                                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTopic(topic.id);
+                                  }}
+                                  className="p-1 text-neutral-400 hover:text-red-500 hover:bg-red-500/10 rounded"
+                                  title="Delete Topic"
+                                >
+                                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
