@@ -108,7 +108,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className={`${inter.className} antialiased min-h-screen bg-slate-950 text-white`} suppressHydrationWarning>
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-PV693NH7XE"
+          src="https://www.googletagmanager.com/gtag/js?id=G-RB21BDLF23"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -117,7 +117,7 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-PV693NH7XE');
+            gtag('config', 'G-RB21BDLF23');
           `}
         </Script>
         <AdSenseScript />

@@ -217,28 +217,28 @@ export default function SettingsPage() {
           <div>
             <label className="block text-sm font-medium text-neutral-300 mb-2">
               Google AdSense ID
-              <span className="text-neutral-500 font-normal ml-2">(e.g., ca-pub-xxxxx)</span>
+              <span className="text-xs text-green-500 font-bold ml-2 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">Active</span>
             </label>
             <input
               type="text"
-              value={settings.adsenseId}
-              onChange={(e) => setSettings({ ...settings, adsenseId: e.target.value })}
-              className="w-full border border-neutral-700 bg-neutral-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-              placeholder="ca-pub-xxxxxxxxxx"
+              value={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || ""}
+              disabled
+              className="w-full border border-neutral-700 bg-neutral-950 rounded-xl px-4 py-2.5 text-gray-400 font-mono text-sm cursor-not-allowed focus:outline-none"
             />
+             <p className="text-xs text-neutral-600 mt-1">Configured via environment variables.</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-neutral-300 mb-2">
               Google Analytics ID
-              <span className="text-neutral-500 font-normal ml-2">(e.g., G-XXXXXXXX)</span>
+               <span className="text-xs text-green-500 font-bold ml-2 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">Active</span>
             </label>
             <input
               type="text"
-              value={settings.analyticsId}
-              onChange={(e) => setSettings({ ...settings, analyticsId: e.target.value })}
-              className="w-full border border-neutral-700 bg-neutral-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-              placeholder="G-XXXXXXXXXX"
+              value="G-RB21BDLF23"
+              disabled
+              className="w-full border border-neutral-700 bg-neutral-950 rounded-xl px-4 py-2.5 text-gray-400 font-mono text-sm cursor-not-allowed focus:outline-none"
             />
+            <p className="text-xs text-neutral-600 mt-1">Configured via layout.tsx.</p>
           </div>
         </div>
       </div>
