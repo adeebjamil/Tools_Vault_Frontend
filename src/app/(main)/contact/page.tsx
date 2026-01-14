@@ -41,7 +41,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white py-20">
+    <div className="min-h-screen bg-black text-white pt-32 pb-20">
       
       {/* Background Gradients */}
       <div className="fixed inset-0 pointer-events-none">
@@ -197,22 +197,23 @@ export default function ContactPage() {
           <div className="space-y-6">
             
             {/* Social Channels */}
-            <div className="bg-neutral-900/50 backdrop-blur-xl border border-neutral-800 rounded-3xl p-6">
+            {/* Social Channels */}
+            <div className="bg-neutral-900/50 backdrop-blur-xl border border-neutral-800 rounded-3xl p-8">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                 Connect With Us
               </h3>
               
               <div className="space-y-3">
-                <a href="mailto:privacy.toolsvault@gmail.com" className="flex items-center gap-4 p-4 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-blue-500/50 hover:bg-black transition-all group">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
+                <a href="mailto:privacy.toolsvault@gmail.com" className="flex items-center gap-4 p-4 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-blue-500/50 hover:bg-black transition-all group overflow-hidden">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex-shrink-0 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs text-neutral-500 font-medium uppercase tracking-wide">Email Us</p>
-                    <p className="text-neutral-200 font-semibold group-hover:text-blue-400 transition-colors">privacy.toolsvault@gmail.com</p>
+                    <p className="text-neutral-200 font-semibold group-hover:text-blue-400 transition-colors truncate">privacy.toolsvault@gmail.com</p>
                   </div>
                 </a>
 

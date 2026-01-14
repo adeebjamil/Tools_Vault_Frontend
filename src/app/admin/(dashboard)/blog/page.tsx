@@ -823,30 +823,28 @@ export default function BlogPage() {
                     <label className="text-sm font-bold text-white mb-3 block">
                       Internal Links (Optional for SEO)
                     </label>
-                    <div className="grid grid-cols-2 gap-2 mb-2">
+                    <div className="flex gap-2 mb-2 items-center">
                        <input
                           type="text"
                           value={newLinkAnchor}
                           onChange={(e) => setNewLinkAnchor(e.target.value)}
-                          placeholder="Anchor Text (e.g. 'Read our guide')"
-                          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
+                          placeholder="Anchor Text"
+                          className="flex-1 min-w-0 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
                         />
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={newLinkUrl}
-                            onChange={(e) => setNewLinkUrl(e.target.value)}
-                            placeholder="URL (e.g. /tools/formatter)"
-                            className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
-                          />
-                          <button
-                            onClick={handleAddLink}
-                            disabled={!newLinkAnchor || !newLinkUrl}
-                            className="px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 disabled:opacity-50"
-                          >
-                            +
-                          </button>
-                        </div>
+                        <input
+                          type="text"
+                          value={newLinkUrl}
+                          onChange={(e) => setNewLinkUrl(e.target.value)}
+                          placeholder="URL (e.g. /tools/formatter)"
+                          className="flex-1 min-w-0 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500"
+                        />
+                        <button
+                          onClick={handleAddLink}
+                          disabled={!newLinkAnchor || !newLinkUrl}
+                          className="px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 disabled:opacity-50 flex-shrink-0"
+                        >
+                          +
+                        </button>
                     </div>
                     
                     {/* List of added links */}
