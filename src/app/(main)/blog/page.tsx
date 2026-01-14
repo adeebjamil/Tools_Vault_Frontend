@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+import Pagination from "@/components/ui/Pagination";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface BlogPost {
@@ -37,8 +39,10 @@ export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    setCurrentPage(1);
     const fetchPosts = async () => {
       try {
         const url = selectedCategory 
@@ -100,6 +104,14 @@ export default function BlogPage() {
 
   const featuredPost = posts[0];
   const remainingPosts = posts.slice(1);
+
+  // Pagination Logic
+  const POSTS_PER_PAGE = 9;
+  const totalPages = Math.ceil(remainingPosts.length / POSTS_PER_PAGE);
+  const currentPosts = remainingPosts.slice(
+    (currentPage - 1) * POSTS_PER_PAGE,
+    currentPage * POSTS_PER_PAGE
+  );
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
@@ -181,9 +193,18 @@ export default function BlogPage() {
             <p className="text-neutral-500">Loading articles...</p>
           </div>
         ) : posts.length === 0 ? (
-          /* Professional Empty State */
-          <div className="relative">
-            {/* Coming Soon Section */}
+          /* ... Empty State Code Omitted for Brevity ... (Keep existing empty state) */
+          /* Note: In replace_file_content, I must provide the exact context if I want to keep it or just replace the block I'm targeting. 
+             Since the empty state is huge and I don't want to re-paste it all, I will target the rendering logic more precisely if possible.
+             But the "empty state" block is inside the "else" of `posts.length === 0`.
+             I will try to target the `else` block specifically or just the grid rendering part.
+           */
+             <div className="relative">
+            {/* Talking the empty state is too risky to match perfectly if I don't paste it all. 
+                I will start replacement AFTER the empty state block (line 289 approx) or just rewrite the Grid Rendering part.
+                Lines 290 to 435 cover the content when posts exist.
+            */}
+             {/* Coming Soon Section */}
             <div className="text-center py-16">
               <div className="relative inline-block mb-8">
                 <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/20 flex items-center justify-center mx-auto">
@@ -289,7 +310,7 @@ export default function BlogPage() {
         ) : (
           <>
             {/* Featured Post */}
-            {featuredPost && (
+            {featuredPost && currentPage === 1 && (
               <div className="mb-16">
                 <div className="flex items-center gap-2 mb-6">
                   <span className="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full">
@@ -367,7 +388,7 @@ export default function BlogPage() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {remainingPosts.map((post, index) => (
+                  {currentPosts.map((post, index) => (
                     <Link key={post.id} href={`/blog/${post.slug}`}>
                       <article 
                         className="group h-full bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all hover:shadow-xl hover:shadow-purple-500/5"
@@ -429,6 +450,16 @@ export default function BlogPage() {
                     </Link>
                   ))}
                 </div>
+
+                {/* Pagination */}
+                <Pagination 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => {
+                    setCurrentPage(page);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                />
               </>
             )}
           </>

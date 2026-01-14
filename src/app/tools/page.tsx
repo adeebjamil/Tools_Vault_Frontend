@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ToolCard from "@/components/ui/ToolCard";
+import Pagination from "@/components/ui/Pagination";
+
+// ... (keep existing tools array) ...
 
 const tools = [
   {
@@ -110,8 +113,10 @@ export default function ToolsPage() {
 
   const [email, setEmail] = useState("");
   const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSubscribe = async () => {
+    // ... (keep existing implementation)
     if (!email) return;
     setNewsletterStatus("loading");
     try {
@@ -154,12 +159,26 @@ export default function ToolsPage() {
     });
   }, [searchQuery, activeCategory]);
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeCategory]);
+
+  // Pagination Logic
+  const TOOLS_PER_PAGE = 12; // 3 rows of 4
+  const totalPages = Math.ceil(filteredTools.length / TOOLS_PER_PAGE);
+  const currentTools = filteredTools.slice(
+    (currentPage - 1) * TOOLS_PER_PAGE,
+    currentPage * TOOLS_PER_PAGE
+  );
+
   const [showFilters, setShowFilters] = useState(false);
 
   return (
     <>
       {/* Hero Section */}
       <section className="relative pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-10 md:pb-14 overflow-hidden">
+        {/* ... (keep existing helper text/headings) ... */}
         <div className="absolute inset-0 bg-grid opacity-30" />
         <div className="absolute inset-0 bg-radial-glow" />
         
@@ -309,13 +328,26 @@ export default function ToolsPage() {
 
           {/* Tools Grid */}
           {filteredTools.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {filteredTools.map((tool, index) => (
-                <div key={tool.id} className={`animate-slide-up stagger-${(index % 5) + 1}`}>
-                  <ToolCard {...tool} />
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {currentTools.map((tool, index) => (
+                  <div key={tool.id} className={`animate-slide-up stagger-${(index % 5) + 1}`}>
+                    <ToolCard {...tool} />
+                  </div>
+                ))}
+              </div>
+
+               {/* Pagination */}
+               <Pagination 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => {
+                    setCurrentPage(page);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="mt-16"
+                />
+            </>
           ) : (
             <div className="text-center py-16">
               <div className="w-16 h-16 rounded-2xl bg-slate-800/50 flex items-center justify-center mx-auto mb-4">
