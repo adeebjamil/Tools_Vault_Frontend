@@ -59,7 +59,7 @@ const tools = [
     id: "jwt-generator",
     title: "JWT Token Generator",
     description: "Generate and decode JSON Web Tokens for authentication.",
-    image: "/toolsimages/JWT Token Generator.webp",
+    image: "/toolsimages/jwt-tool.png",
     category: "Developer",
     href: "/tools/jwt-generator",
   },
