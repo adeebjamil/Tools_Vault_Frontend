@@ -96,10 +96,11 @@ export default function MarkdownToPdfPage() {
                     </div>
                     
                     <div className="flex-1 bg-slate-200/50 rounded-xl p-4 overflow-y-auto flex justify-center">
-                        <div className="bg-white shadow-xl min-h-full w-full max-w-[210mm] p-[10mm] text-slate-900 prose prose-sm max-w-none">
-                             <div ref={previewRef}>
-                                <ReactMarkdown>{markdown}</ReactMarkdown>
-                             </div>
+                        <div 
+                            ref={previewRef}
+                            className="bg-white shadow-xl min-h-full w-full max-w-[210mm] p-[10mm] text-slate-900 prose prose-sm max-w-none [&_*]:text-slate-900"
+                        >
+                            <ReactMarkdown>{markdown}</ReactMarkdown>
                         </div>
                     </div>
                 </div>
